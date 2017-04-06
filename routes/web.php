@@ -10,6 +10,21 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+function user_ins(){
+    return new App\User;
+}
+
+function question_ins(){
+    return new App\Question;
+}
+
+function answer_ins(){
+    return new App\Answer;
+}
+
+function comment_ins(){
+    return new App\Comment;
+}
 
 Route::get('/', function () {
     return view('welcome');
@@ -20,23 +35,51 @@ Route::any('api',function(){
 });
 
 Route::any('api/signup',function(){
-    $user=new App\User;
-    return $user->signup();
+    return user_ins()->signup();
 });
 
 Route::any('api/login',function(){
-    $user=new App\User;
-    return $user->login();
+    return user_ins()->login();
 });
 
 Route::any('api/logout',function(){
-    $user=new App\User;
-    return $user->logout();
+    return user_ins()->logout();
+});
+
+Route::any('api/question/add',function(){
+   return question_ins()->add();
+});
+
+Route::any('api/question/change',function(){
+    return question_ins()->change();
+});
+
+Route::any('api/question/read',function(){
+    return question_ins()->read();
+});
+
+Route::any('api/question/remove',function(){
+    return question_ins()->remove();
+});
+
+Route::any('api/answer/add',function(){
+    return answer_ins()->add();
+});
+
+Route::any('api/answer/change',function(){
+    return answer_ins()->change();
+});
+
+Route::any('api/answer/read',function(){
+    return answer_ins()->read();
+});
+
+Route::any('api/comment/add',function(){
+    return comment_ins()->add();
 });
 
 Route::any('test',function(){
-    $user=new App\User;
-    dd($user->is_logged_in());
+    dd(user_ins()->is_logged_in());
 });
 
 
