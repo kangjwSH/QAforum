@@ -75,4 +75,57 @@ class Answer extends Model
         $answers=$this->where('question_id',Request::get('question_id'))->get()->keyBy('id');
         return ['status'=>1,'data'=>$answers];
     }
+
+    public function remove(){
+        if(!user_ins()->is_logged_in()){
+            return ['status'=>0,'msg'=>'login is required'];
+        }
+
+        if(!Request::get('id')){
+            return ['status'=>0,'msg'=>'id is required'];
+        }
+
+        $answer=$this->find(Request::get('id'));
+        if(!$answer){
+            return ['status'=>0,'msg'=>'answer does not exist'];
+        }
+        if($answer->user_id!=session('user_id')) {
+            return ['status' => 0, 'msg' => 'permission denied'];
+        }
+
+        return $answer->delete()?
+            ['status'=>1]:
+            ['status'=>0,'msg'=>'db delete failed'];
+    }
+
+    public function vote(){
+        if(!user_ins()->is_logged_in()){
+            return ['status'=>0,'msg'=>'login is required'];
+        }
+
+        if(!Request::get('id')||!Request::get('vote')){
+            return ['status'=>0,'msg'=>'id and vote are required'];
+        }
+        $answer=$this->find(Request::get('id'));
+        if(!$answer){
+            return ['status'=>0,'msg'=>'answer does not exist'];
+        }
+        $vote=Request::get('vote')<=1?1:2;
+        $answer->users()
+            ->newPivotStatement()
+            ->where('user_id',session('user_id'))
+            ->where('answer_id',Request::get('id'))
+            ->delete();
+        $answer->users()
+            ->attach(session('user_id'),['vote'=>$vote]);
+
+        return ['status'=>1];
+    }
+
+    public function users(){
+        return $this
+            ->belongsToMany('App\User')
+            ->withPivot('vote')
+            ->withTimestamps();
+    }
 }

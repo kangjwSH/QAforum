@@ -38,12 +38,28 @@ Route::any('api/signup',function(){
     return user_ins()->signup();
 });
 
+Route::any('api/userRead',function(){
+    return user_ins()->userRead();
+});
+
 Route::any('api/login',function(){
     return user_ins()->login();
 });
 
 Route::any('api/logout',function(){
     return user_ins()->logout();
+});
+
+Route::any('api/changePassword',function(){
+    return user_ins()->change_password();
+});
+
+Route::any('api/resetPassword',function(){
+    return user_ins()->reset_password();
+});
+
+Route::any('api/validateResetPassword',function(){
+    return user_ins()->validate_reset_password();
 });
 
 Route::any('api/question/add',function(){
@@ -74,8 +90,24 @@ Route::any('api/answer/read',function(){
     return answer_ins()->read();
 });
 
+Route::any('api/answer/remove',function(){
+    return answer_ins()->remove();
+});
+
+Route::any('api/answer/vote',function(){
+    return answer_ins()->vote();
+});
+
 Route::any('api/comment/add',function(){
     return comment_ins()->add();
+});
+
+Route::any('api/comment/read',function(){
+    return comment_ins()->read();
+});
+
+Route::any('api/comment/remove',function(){
+    return comment_ins()->remove();
 });
 
 Route::any('test',function(){

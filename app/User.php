@@ -37,6 +37,18 @@ class User extends Model
        }
     }
 
+    public function userRead(){
+        if(!Request::get('id')){
+            return ['status'=>0,'id is required'];
+        }
+        $get=['username','avatar_url','intro'];
+        $data=$this->find(Request::get('id'),$get);
+        $answer_count=answer_ins()->where('user_id',Request::get('id'))->count();
+        $question_count=question_ins()->where('user_id',Request::get('id'))->count();
+        $data['answer_count']=$answer_count;
+        $data['question_count']=$question_count;
+        return ['status'=>1,'data'=>$data];
+    }
     public function login(){
         //检查请求过来的用户名和密码是否为空
         $hasUsernameAndPassword=$this->hasUsernameAndPassword();
@@ -75,6 +87,78 @@ class User extends Model
         return session()->get('user_id')?:false;
     }
 
+    public function change_password(){
+        if(!$this->is_logged_in()){
+            return ['status'=>0,'login required'];
+        }
+        if(!Request::get('old_password')||!Request::get('old_password')){
+            return ['status'=>0,'old password and new password are required'];
+        }
+        $user=$this->find(session('user_id'));
+        $use_password=$user->password;
+        if($use_password!=md5(Request::get('old_password'))){
+            return ['status'=>0,'invalid old password'];
+        }
+        $user->password=md5(Request::get('new_password'));
+        return $user->save()?
+            ['status'=>1]:
+            ['status'=>0,'msg'=>'db update failed'];
+    }
+
+    public function reset_password(){
+        $current_time=time();
+        $last_sms_time=session('last_sms_time');
+        if($last_sms_time&&$current_time-$last_sms_time<10){
+            //return ['current_time'=>$current_time,'last_sms_time'=>$last_sms_time];
+            return ['status'=>0,'msg'=>'max frequency reached'];
+        }
+        if(!Request::get('phone')){
+            return ['status'=>0,'msg'=>'phone is required'];
+        }
+        $user=$this->where('phone',Request::get('phone'))->first();
+        if(!$user){
+            return ['status'=>0,'msg'=>'invalid phone number'];
+        }
+
+        $captcha=$this->generate_captcha();
+        $user->phone_captcha=$captcha;
+       if($user->save()){
+           $this->send_sms();
+           session()->put('last_sms_time',time());
+           session()->save();
+          return ['status'=>1];
+       }
+       return ['status'=>0,'msg'=>'db update failed'];
+
+    }
+
+    //生成验证码
+    public function generate_captcha(){
+        return rand(100000,999999);
+    }
+
+    public function send_sms(){
+        return true;
+    }
+
+    public function validate_reset_password(){
+        if(!Request::get('phone')||!Request::get('phone_captcha')||!Request::get('new_password')){
+            return ['status'=>0,'msg'=>'new password,phone and phone captcha are required'];
+        }
+        $user=$this
+            ->where([
+                'phone'=>Request::get('phone'),
+                'phone_captcha'=>Request::get('phone_captcha')
+            ])->first();
+        if(!$user){
+            return ['status'=>0,'msg'=>'invalid phone or phone captcha'];
+        }
+        $user->password=md5(Request::get('new_password'));
+        return $user->save()?
+            ['status'=>1]:
+            ['status'=>0,'msg'=>'db update failed'];
+    }
+
      private function hasUsernameAndPassword(){
         $username=Request::get('username');
         $password=Request::get('password');
@@ -82,5 +166,14 @@ class User extends Model
             return [$username,$password];
         return false;
     }
+
+    public function answers(){
+        return $this
+            ->belongsToMany('App\Answer')
+            ->withPivot('vote')
+            ->withTimestamps();
+    }
+
+
 
 }
