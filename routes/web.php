@@ -27,14 +27,14 @@ function comment_ins(){
 }
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
 });
 
 Route::any('api',function(){
     return ['version'=>0.1,'author'=>'James Kang'];
 });
 
-Route::any('api/signup',function(){
+Route::any('user/signup',function(){
     return user_ins()->signup();
 });
 
@@ -42,7 +42,7 @@ Route::any('api/userRead',function(){
     return user_ins()->userRead();
 });
 
-Route::any('api/login',function(){
+Route::any('user/login',function(){
     return user_ins()->login();
 });
 
@@ -52,6 +52,10 @@ Route::any('api/logout',function(){
 
 Route::any('api/changePassword',function(){
     return user_ins()->change_password();
+});
+
+Route::any('/user/exist',function(){
+    return user_ins()->exist();
 });
 
 Route::any('api/resetPassword',function(){

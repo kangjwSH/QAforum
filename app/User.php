@@ -173,6 +173,10 @@ class User extends Model
             ->withPivot('vote')
             ->withTimestamps();
     }
+    public function exist(){
+        $count=$this->where('username',Request::get('username'))->count();
+        return ['status'=>1,'count'=>$count];
+    }
 
 
 
