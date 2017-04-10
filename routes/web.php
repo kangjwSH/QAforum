@@ -70,7 +70,7 @@ Route::any('api/validateResetPassword',function(){
     return user_ins()->validate_reset_password();
 });
 
-Route::any('api/question/add',function(){
+Route::any('/question/add',function(){
    return question_ins()->add();
 });
 
