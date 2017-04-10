@@ -34,10 +34,10 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="#" ui-sref="home">首页<span class="sr-only">(current)</span></a></li>
-                    <li><a href="#" ui-sref="register">注册</a></li>
+                    <li><a href="#" ui-sref="question.add">提问</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">Link</a></li>
+                    {{--<li><a href="#">Link</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
                         <ul class="dropdown-menu">
@@ -47,7 +47,14 @@
                             <li role="separator" class="divider"></li>
                             <li><a href="#">Separated link</a></li>
                         </ul>
-                    </li>
+                    </li>--}}
+                    @if(is_logged_in())
+                        <li><a href="#">{{session('username')}}</a></li>
+                        <li ng-controller="LogoutController"><a href="#" ng-click="User.logout()">登出</a></li>
+                    @else
+                        <li><a href="#" ui-sref="register">注册</a></li>
+                        <li><a href="#" ui-sref="login">登陆</a></li>
+                    @endif
                 </ul>
                 <form class="navbar-form navbar-left">
                     <div class="form-group">
@@ -159,6 +166,49 @@
                                 </div>
                             </div>
                         </div>--}}
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-default"
+                                        ng-disabled="loginForm.username.$error.required||loginForm.password.$error.required">
+                                    登陆
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="question.add.tpl">
+        <div class="panel panel-default" style="width: 50%;margin: 0 auto;">
+            <div class="panel-heading">提问</div>
+            <div class="panel-body">
+                <div ng-controller="LoginController">
+                    <form class="form-horizontal" ng-submit="User.login()" name="loginForm">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label">问题</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="loginUsername" placeholder="请输入用户名"
+                                       ng-model="User.loginData.username"
+                                       name="username"
+                                       required
+                                >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-2 control-label">密码</label>
+                            <div class="col-sm-10">
+                                <input type="password" class="form-control" id="loginPassword" placeholder="请输入密码"
+                                       ng-model="User.loginData.password"
+                                       name="password"
+                                       required
+                                >
+                            </div>
+                        </div>
+                        <div ng-if="User.loginFailed" class="col-sm-offset-2" style="margin-bottom: 20px">
+                            <span class="label label-danger">用户名或密码有误</span>
+                        </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
                                 <button type="submit" class="btn btn-default"

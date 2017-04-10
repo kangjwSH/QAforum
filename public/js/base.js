@@ -25,7 +25,16 @@
             .state('login',{
                 url:'/login',
                 templateUrl:'login.tpl'
-        })
+            })
+            .state('question',{
+                abstract:true,
+                url:'/question',
+                template:'<div ui-view></div>'
+            })
+            .state('question.add',{
+                url:'/add',
+                templateUrl:'question.add.tpl'
+            })
     }]);
 
     xiaohuApp.service('UserService',[
@@ -41,7 +50,7 @@
                         if(result.data.status){
                             me.registerData={};
                             setTimeout(function () {
-                                $state.go('login');
+                                location.href='/';
                             },1000);
 
                         }
@@ -68,8 +77,7 @@
                     .then(function (result) {
                         if(result.data.status){
                             setTimeout(function () {
-                                $state.go('home');
-                                location.href='/';
+                               location.href='/';
                             },1000);
                         }else{
                             me.loginFailed=true;
@@ -78,6 +86,20 @@
                         
                     });
             };
+            me.logout=function () {
+                $http.post('/user/logout','')
+                    .then(function (result) {
+                        if(result.data.status){
+                            setTimeout(function () {
+                                location.href='/';
+                            },1000);
+                        }else{
+                            me.logoutFailed=true;
+                        }
+                    },function () {
+
+                    });
+            }
         }
     ]);
 
@@ -108,6 +130,14 @@
                     UserService.usernameExists();
                 }
             },true);*/
+        }
+    ]);
+
+    xiaohuApp.controller('LogoutController',[
+        '$scope',
+        'UserService',
+        function ($scope,UserService) {
+            $scope.User=UserService;
         }
     ]);
 

@@ -26,6 +26,10 @@ function comment_ins(){
     return new App\Comment;
 }
 
+function is_logged_in(){
+    return session()->get('user_id')?:false;
+}
+
 Route::get('/', function () {
     return view('index');
 });
@@ -46,7 +50,7 @@ Route::any('user/login',function(){
     return user_ins()->login();
 });
 
-Route::any('api/logout',function(){
+Route::any('user/logout',function(){
     return user_ins()->logout();
 });
 
