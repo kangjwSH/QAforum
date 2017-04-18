@@ -26,6 +26,10 @@ function comment_ins(){
     return new App\Comment;
 }
 
+function common_ins(){
+    return new App\Common;
+}
+
 function is_logged_in(){
     return session()->get('user_id')?:false;
 }
@@ -38,88 +42,61 @@ Route::any('api',function(){
     return ['version'=>0.1,'author'=>'James Kang'];
 });
 
-Route::any('user/signup',function(){
-    return user_ins()->signup();
-});
 
-Route::any('api/userRead',function(){
-    return user_ins()->userRead();
-});
 
-Route::any('user/login',function(){
-    return user_ins()->login();
-});
 
-Route::any('user/logout',function(){
-    return user_ins()->logout();
-});
 
-Route::any('api/changePassword',function(){
-    return user_ins()->change_password();
-});
+Route::any('getSession','UserController@getSession');
 
-Route::any('/user/exist',function(){
-    return user_ins()->exist();
-});
+Route::any('user/signup','UserController@signup');
+Route::any('user/login','UserController@login');
+Route::any('user/logout','UserController@logout');
+Route::any('user/changePassword','UserController@change_password');
+Route::any('user/exist','UserController@exist');
+Route::any('user/resetPassword','UserController@reset_password');
+Route::any('user/userRead','UserController@userRead');
+Route::any('user/validateResetPassword','UserController@validate_reset_password');
 
-Route::any('api/resetPassword',function(){
-    return user_ins()->reset_password();
-});
+Route::any('question/add','QuestionController@add');
+Route::any('question/change','QuestionController@change');
+Route::any('question/remove','QuestionController@remove');
+Route::any('question/read','QuestionController@read');
 
-Route::any('api/validateResetPassword',function(){
-    return user_ins()->validate_reset_password();
-});
 
-Route::any('/question/add',function(){
-   return question_ins()->add();
-});
 
-Route::any('api/question/change',function(){
-    return question_ins()->change();
-});
-
-Route::any('api/question/read',function(){
-    return question_ins()->read();
-});
-
-Route::any('api/question/remove',function(){
-    return question_ins()->remove();
-});
-
-Route::any('api/answer/add',function(){
-    return answer_ins()->add();
-});
-
-Route::any('api/answer/change',function(){
-    return answer_ins()->change();
-});
-
-Route::any('api/answer/read',function(){
-    return answer_ins()->read();
-});
-
-Route::any('api/answer/remove',function(){
-    return answer_ins()->remove();
-});
+Route::any('answer/add','AnswerController@add');
+Route::any('answer/change','AnswerController@change');
+Route::any('answer/read','AnswerController@read');
+Route::any('answer/remove','AnswerController@remove');
 
 Route::any('api/answer/vote',function(){
     return answer_ins()->vote();
 });
 
-Route::any('api/comment/add',function(){
-    return comment_ins()->add();
+Route::any('comment/add','CommentController@add');
+Route::any('comment/read','CommentController@read');
+
+Route::any('common/getTimeline','CommonController@getTimeline');
+
+Route::any('comment/remove','CommentController@remove');
+
+Route::get('tpl/page/home',function(){
+    return view('page.home');
 });
 
-Route::any('api/comment/read',function(){
-    return comment_ins()->read();
+Route::get('tpl/page/register',function(){
+    return view('page.register');
 });
 
-Route::any('api/comment/remove',function(){
-    return comment_ins()->remove();
+Route::get('tpl/page/login',function(){
+    return view('page.login');
 });
 
-Route::any('test',function(){
-    dd(user_ins()->is_logged_in());
+Route::get('tpl/page/questionAdd',function(){
+    return view('page.questionAdd');
 });
+
+Route::any('test2','UserController@test');
+
 
 
